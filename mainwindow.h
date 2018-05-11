@@ -24,8 +24,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
 
     void boardInit(Sudoku *s);
+    void printBoard(Sudoku *s);
+    void setBoard(Sudoku *s);
+
 
     ~MainWindow();
+
+private slots:
+    void setBoardEnable();
 
 private:
     Ui::MainWindow *ui;

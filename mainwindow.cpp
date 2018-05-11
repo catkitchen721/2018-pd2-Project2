@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     s = new Sudoku();
 
     boardInit(s);
+    connect(ui->newGame, SIGNAL(clicked(bool)), this, SLOT(setBoardEnable()));
 }
 
 MainWindow::~MainWindow()
@@ -43,4 +44,28 @@ void MainWindow::boardInit(Sudoku *s)
         }
     }
 
+    ui->board->setEnabled(false);
+    ui->messageBlock->insertHtml(*(new QString("<p>Initializing completed.<br/></p>")));
+}
+
+void MainWindow::printBoard(Sudoku *s)
+{
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            ui->board->setItem(i, j, new QTableWidgetItem(QString::number(s->getElement(i, j)),0));
+        }
+    }
+}
+
+void MainWindow::setBoard(Sudoku *s)
+{
+    s->setMap(*(ui->board));
+    printBoard(s);
+}
+
+void MainWindow::setBoardEnable()
+{
+    ui->board->setEnabled(true);
 }
