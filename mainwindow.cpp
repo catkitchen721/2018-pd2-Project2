@@ -6,11 +6,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    Sudoku *s;
     s = new Sudoku();
 
-    boardInit(s);
-    connect(ui->newGame, SIGNAL(clicked(bool)), this, SLOT(setBoardEnable()));
+    boardInit();
+    connect(ui->newGame, SIGNAL(clicked(bool)), this, SLOT(setBoardToggle()));
 }
 
 MainWindow::~MainWindow()
@@ -18,13 +17,30 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::boardInit(Sudoku *s)
+void MainWindow::boardInit()
 {
+    printBoard();
+
+    this->isSettingBoard = false;
+    ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->messageBlock->insertHtml(*(new QString("<p>Initializing completed.<br/></p>")));
+}
+
+void MainWindow::printBoard()
+{
+    ui->board->clearSelection();
     for(int i=0; i<9; ++i)
     {
         for(int j=0; j<9; j++)
         {
-            ui->board->setItem(i, j, new QTableWidgetItem(QString::number(s->getElement(i, j)),0));
+            if(s->getElement(i, j) <= 0 || s->getElement(i, j) > 9)
+            {
+                ui->board->setItem(i, j, new QTableWidgetItem(*(new QString("")),0));
+            }
+            else
+            {
+                ui->board->setItem(i, j, new QTableWidgetItem(QString::number(s->getElement(i, j)),0));
+            }
             QTableWidgetItem *theCell = ui->board->item(i, j);
             theCell->setTextAlignment(Qt::AlignCenter);
             if((i >= 0 && i<= 2) || (i >= 6 && i <= 8))
@@ -43,29 +59,35 @@ void MainWindow::boardInit(Sudoku *s)
             }
         }
     }
-
-    ui->board->setEnabled(false);
-    ui->messageBlock->insertHtml(*(new QString("<p>Initializing completed.<br/></p>")));
 }
 
-void MainWindow::printBoard(Sudoku *s)
-{
-    for(int i=0; i<9; ++i)
-    {
-        for(int j=0; j<9; ++j)
-        {
-            ui->board->setItem(i, j, new QTableWidgetItem(QString::number(s->getElement(i, j)),0));
-        }
-    }
-}
-
-void MainWindow::setBoard(Sudoku *s)
+void MainWindow::setBoard()
 {
     s->setMap(*(ui->board));
-    printBoard(s);
+    printBoard();
 }
 
-void MainWindow::setBoardEnable()
+void MainWindow::setBoardToggle()
 {
-    ui->board->setEnabled(true);
+    if(this->isSettingBoard == false)
+    {
+        ui->board->setEditTriggers(QAbstractItemView::CurrentChanged|QAbstractItemView::DoubleClicked|QAbstractItemView::SelectedClicked);
+        ui->newGame->setText("Solve !");
+        ui->checking->setEnabled(false);
+        ui->checking->setFlat(true);
+        ui->answer->setEnabled(false);
+        ui->answer->setFlat(true);
+        this->isSettingBoard = true;
+    }
+    else
+    {
+        ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        ui->newGame->setText("New Game");
+        ui->checking->setEnabled(true);
+        ui->checking->setFlat(false);
+        ui->answer->setEnabled(true);
+        ui->answer->setFlat(false);
+        this->setBoard();
+        this->isSettingBoard = false;
+    }
 }

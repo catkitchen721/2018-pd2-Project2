@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QString>
 #include <QBrush>
+#include <QAbstractItemView>
 
 #include "sudoku.h"
 
@@ -23,18 +24,21 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
-    void boardInit(Sudoku *s);
-    void printBoard(Sudoku *s);
-    void setBoard(Sudoku *s);
+    void boardInit();
+    void printBoard();
+    void setBoard();
 
 
     ~MainWindow();
 
 private slots:
-    void setBoardEnable();
+    void setBoardToggle();
 
 private:
     Ui::MainWindow *ui;
+    Sudoku *s;
+
+    bool isSettingBoard;
 };
 
 #endif // MAINWINDOW_H
