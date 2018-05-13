@@ -326,9 +326,57 @@ void Sudoku::generateSudoku(QTextBrowser *msg, QTableWidget *board)
     };
 
     //change row
+    int r1 = 0, r2 = 0;
+    while(r1 == r2)
+    {
+        r1 = rand() % 3;
+        r2 = rand() % 3;
+    }
 
+    if(r1 == 0)  r1 = 0;
+    else if(r1 == 1) r1 = 3;
+    else if(r1 == 2) r1 = 6;
+
+    if(r2 == 0)  r2 = 0;
+    else if(r2 == 1) r2 = 3;
+    else if(r2 == 2) r2 = 6;
+
+    int temp = 0;
+    for(int i=0; i<3; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            temp = seedMap[r1+i][j];
+            seedMap[r1+i][j] = seedMap[r2+i][j];
+            seedMap[r2+i][j] = temp;
+        }
+    }
     //change column
+    int c1 = 0, c2 = 0;
+    while(c1 == c2)
+    {
+        c1 = rand() % 3;
+        c2 = rand() % 3;
+    }
 
+    if(c1 == 0)  c1 = 0;
+    else if(c1 == 1) c1 = 3;
+    else if(c1 == 2) c1 = 6;
+
+    if(c2 == 0)  c2 = 0;
+    else if(c2 == 1) c2 = 3;
+    else if(c2 == 2) c2 = 6;
+
+    temp = 0;
+    for(int j=0; j<3; ++j)
+    {
+        for(int i=0; i<9; ++i)
+        {
+            temp = seedMap[i][c1+j];
+            seedMap[i][c1+j] = seedMap[i][c2+j];
+            seedMap[i][c2+j] = temp;
+        }
+    }
     //change num
     int x = 0;
     int y = 0;
