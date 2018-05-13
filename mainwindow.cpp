@@ -26,6 +26,8 @@ void MainWindow::boardInit()
 
     this->isSettingBoard = false;
     ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->checking->setEnabled(false);
+    ui->checking->setFlat(true);
     ui->messageBlock->insertHtml(*(new QString("<p>Initializing completed.<br/></p>")));
 }
 
@@ -133,8 +135,9 @@ void MainWindow::generateToggle()
         ui->generate->setText("Give me answer..");
         ui->newGame->setEnabled(false);
         ui->newGame->setFlat(true);
-        //generate
-        this->printBoard();
+        ui->checking->setEnabled(true);
+        ui->checking->setFlat(false);
+        s->generateSudoku(ui->messageBlock, ui->board);
         this->isGenerated = true;
     }
     else
@@ -143,6 +146,8 @@ void MainWindow::generateToggle()
         ui->generate->setText("Generate");
         ui->newGame->setEnabled(true);
         ui->newGame->setFlat(false);
+        ui->checking->setEnabled(false);
+        ui->checking->setFlat(true);
         this->setBoard();
         this->isGenerated = false;
     }
@@ -151,6 +156,15 @@ void MainWindow::generateToggle()
 void MainWindow::checking()
 {
     ui->messageBlock->insertHtml("<p>Checking...<br/></p>");
+    s->setMap(*(ui->board));
+    if(s->isCorrect())
+    {
+        ui->messageBlock->insertHtml("<p>Congratulations! <span style='color:#008800'>Correct.</span><br/></p>");
+    }
+    else
+    {
+        ui->messageBlock->insertHtml("<p>Oops! <span style='color:#008800'>Wrong...</span><br/></p>");
+    }
 }
 
 void MainWindow::msgScroll()

@@ -48,12 +48,75 @@ int Sudoku::getElement(int row, int column)
 
 bool Sudoku::isCorrect()
 {
-    return false;
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            if(!checkingUnity(i, j))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
-bool Sudoku::checkingUnity(const QVector<int> &a)
+bool Sudoku::checkingUnity(int x, int y)
 {
-    return false;
+    int countNum[10] = {0,0,0,0,0,0,0,0,0,0};
+
+    for(int i=0; i<9; ++i)
+    {
+        countNum[this->getElement(i, y)] += 1;
+    }
+
+    for(int j=0; j<9; ++j)
+    {
+        countNum[this->getElement(x, j)] += 1;
+    }
+
+    int sqrI = 0;
+    int sqrJ = 0;
+
+    if(x >= 0 && x <= 2)
+    {
+        sqrI = 0;
+    }
+    else if(x >= 3 && x <= 5)
+    {
+        sqrI = 3;
+    }
+    else
+    {
+        sqrI = 6;
+    }
+
+    if(y >= 0 && y <= 2)
+    {
+        sqrJ = 0;
+    }
+    else if(y >= 3 && y <= 5)
+    {
+        sqrJ = 3;
+    }
+    else
+    {
+        sqrJ = 6;
+    }
+
+    for(int i=sqrI; i<sqrI+3; ++i)
+    {
+        for(int j=sqrJ; j<sqrJ+3; ++j)
+        {
+            countNum[this->getElement(i, j)] += 1;
+        }
+    }
+
+    for(int k=1; k<=9; ++k)
+    {
+        if(countNum[k] != 3)    return false;
+    }
+    return true;
 }
 
 void Sudoku::solveSudoku(QTextBrowser *msg, QTableWidget *board)
@@ -186,11 +249,7 @@ QVector<bool> Sudoku::getPossibleVector(int x, int y)
     {
         if(this->map[x][j] != 0)
         {
-            if(posV.at(this->map[x][j]) == false) return emptyV;
-            else
-            {
-                posV.replace(this->map[x][j], false);
-            }
+            posV.replace(this->map[x][j], false);
         }
     }
 
@@ -198,11 +257,7 @@ QVector<bool> Sudoku::getPossibleVector(int x, int y)
     {
         if(this->map[i][y] != 0)
         {
-            if(posV.at(this->map[i][y]) == false) return emptyV;
-            else
-            {
-                posV.replace(this->map[i][y], false);
-            }
+            posV.replace(this->map[i][y], false);
         }
     }
 
@@ -241,11 +296,7 @@ QVector<bool> Sudoku::getPossibleVector(int x, int y)
         {
             if(this->map[i][j] != 0)
             {
-                if(posV.at(this->map[i][j]) == false) return emptyV;
-                else
-                {
-                    posV.replace(this->map[i][j], false);
-                }
+                posV.replace(this->map[i][j], false);
             }
         }
     }
@@ -256,4 +307,61 @@ QVector<bool> Sudoku::getPossibleVector(int x, int y)
 void Sudoku::setElement(int row, int column, int value)
 {
     this->map[row][column] = value;
+}
+
+void Sudoku::generateSudoku(QTextBrowser *msg, QTableWidget *board)
+{
+    srand(time(NULL));
+    int seedMap[9][9] =
+    {
+        3,7,1,9,8,2,4,6,5,
+        5,8,6,4,3,7,2,9,1,
+        4,9,2,1,6,5,7,3,8,
+        7,6,3,8,9,1,5,2,4,
+        1,2,4,6,5,3,8,7,9,
+        8,5,9,2,7,4,6,1,3,
+        9,4,8,7,1,6,3,5,2,
+        2,3,7,5,4,9,1,8,6,
+        6,1,5,3,2,8,9,4,7
+    };
+
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            this->setElement(i, j, seedMap[i][j]);
+        }
+    }
+
+    board->clearSelection();
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; j++)
+        {
+            if(this->getElement(i, j) <= 0 || this->getElement(i, j) > 9)
+            {
+                board->setItem(i, j, new QTableWidgetItem(*(new QString("")),0));
+            }
+            else
+            {
+                board->setItem(i, j, new QTableWidgetItem(QString::number(this->getElement(i, j)),0));
+            }
+            QTableWidgetItem *theCell = board->item(i, j);
+            theCell->setTextAlignment(Qt::AlignCenter);
+            if((i >= 0 && i<= 2) || (i >= 6 && i <= 8))
+            {
+                if((j >= 0 && j <= 2)||(j >= 6 && j <= 8))
+                {
+                    theCell->setBackgroundColor(*(new QColor(255,120,120)));
+                }
+            }
+            else if(i >= 3 && i <= 5)
+            {
+                if(j >= 3 && j <= 5)
+                {
+                    theCell->setBackgroundColor(*(new QColor(255,120,120)));
+                }
+            }
+        }
+    }
 }
