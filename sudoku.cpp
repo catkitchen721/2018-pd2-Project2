@@ -325,6 +325,40 @@ void Sudoku::generateSudoku(QTextBrowser *msg, QTableWidget *board)
         6,1,5,3,2,8,9,4,7
     };
 
+    //change row
+
+    //change column
+
+    //change num
+
+    //rotate
+
+    //flip
+
+    //createHole
+    int n = rand() % 51 + 20;
+    bool isHole[9][9];
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            isHole[i][j] = false;
+        }
+    }
+    for(int i=0; i<n; ++i)
+    {
+        int indexX = rand() % 9;
+        int indexY = rand() % 9;
+        if(isHole[indexX][indexY])
+        {
+            i -= 1;
+        }
+        else
+        {
+            seedMap[indexX][indexY] = 0;
+        }
+    }
+
     for(int i=0; i<9; ++i)
     {
         for(int j=0; j<9; ++j)
