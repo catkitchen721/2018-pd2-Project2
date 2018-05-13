@@ -32,12 +32,16 @@ public:
 
 private slots:
     void setBoardToggle();
+    void generateToggle();
+    void checking();
+    void msgScroll();
 
 private:
     Ui::MainWindow *ui;
     Sudoku *s;
 
     bool isSettingBoard;
+    bool isGenerated;
 };
 
 #endif // MAINWINDOW_H

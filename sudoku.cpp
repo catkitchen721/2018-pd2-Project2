@@ -30,6 +30,17 @@ void Sudoku::setMap(const QTableWidget &board)
     }
 }
 
+void Sudoku::clearMap()
+{
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            this->setElement(i, j, 0);
+        }
+    }
+}
+
 int Sudoku::getElement(int row, int column)
 {
     return map[row][column];
@@ -40,7 +51,7 @@ bool Sudoku::isCorrect()
     return false;
 }
 
-bool Sudoku::checkingUnity(const int a[])
+bool Sudoku::checkingUnity(const QVector<int> &a)
 {
     return false;
 }
@@ -53,7 +64,7 @@ void Sudoku::solveSudoku(QTextBrowser *msg, QTableWidget *board)
 
     if(isFull())
     {
-        msg->insertHtml("<p>Solving progress completed.<br/></p>");
+        msg->insertHtml("<p style='color:#008800'>Solving progress completed.<br/></p>");
         this->canBeSolved = true;
         //
         board->clearSelection();
@@ -134,20 +145,52 @@ bool Sudoku::isFull()
     return true;
 }
 
+bool Sudoku::isEmpty()
+{
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            if(this->getElement(i, j) != 0) return false;
+        }
+    }
+    return true;
+}
+
+bool Sudoku::isProperMap()
+{
+    int numCount = 0;
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            if(this->getElement(i, j) != 0) numCount += 1;
+        }
+    }
+    if(numCount < 17) return false;
+    else return true;
+}
+
 QVector<bool> Sudoku::getPossibleVector(int x, int y)
 {
     QVector<bool> posV(10);
+    QVector<bool> emptyV(10);
 
     for(int i=1; i<=9; ++i)
     {
         posV.replace(i,true);
+        emptyV.replace(i,false);
     }
 
     for(int j=0; j<9; ++j)
     {
         if(this->map[x][j] != 0)
         {
-            posV.replace(this->map[x][j], false);
+            if(posV.at(this->map[x][j]) == false) return emptyV;
+            else
+            {
+                posV.replace(this->map[x][j], false);
+            }
         }
     }
 
@@ -155,7 +198,11 @@ QVector<bool> Sudoku::getPossibleVector(int x, int y)
     {
         if(this->map[i][y] != 0)
         {
-            posV.replace(this->map[i][y], false);
+            if(posV.at(this->map[i][y]) == false) return emptyV;
+            else
+            {
+                posV.replace(this->map[i][y], false);
+            }
         }
     }
 
@@ -194,7 +241,11 @@ QVector<bool> Sudoku::getPossibleVector(int x, int y)
         {
             if(this->map[i][j] != 0)
             {
-                posV.replace(this->map[i][j], false);
+                if(posV.at(this->map[i][j]) == false) return emptyV;
+                else
+                {
+                    posV.replace(this->map[i][j], false);
+                }
             }
         }
     }

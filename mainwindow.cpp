@@ -10,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     boardInit();
     connect(ui->newGame, SIGNAL(clicked(bool)), this, SLOT(setBoardToggle()));
+    connect(ui->generate, SIGNAL(clicked(bool)), this, SLOT(generateToggle()));
+    connect(ui->checking, SIGNAL(clicked(bool)), this, SLOT(checking()));
+    connect(ui->messageBlock, SIGNAL(cursorPositionChanged()), this, SLOT(msgScroll()));
 }
 
 MainWindow::~MainWindow()
@@ -65,10 +68,33 @@ void MainWindow::setBoard()
 {
     s->setMap(*(ui->board));
     s->canBeSolved = false;
-    s->solveSudoku(ui->messageBlock, ui->board);
+    if(s->isFull())
+    {
+        ui->messageBlock->insertHtml("<p style='color:#ff0000'>The Sudoku problem map is full now.<br/></p>");
+        return;
+    }
+    if(s->isEmpty())
+    {
+        ui->messageBlock->insertHtml("<p style='color:#ff0000'>The Sudoku problem map is Empty now.<br/></p>");
+        return;
+    }
+    if(!(s->isProperMap()))
+    {
+        ui->messageBlock->insertHtml("<p style='color:#ff0000'>Number of known cells is too less.<br/></p>");
+        return;
+    }
+    try
+    {
+        s->solveSudoku(ui->messageBlock, ui->board);
+    }
+    catch(std::bad_exception e)
+    {
+        ui->messageBlock->insertHtml("<p style='color:#ff0000'>Unknown Error.<br/></p>");
+        return;
+    }
     if(s->canBeSolved == false)
     {
-        ui->messageBlock->insertHtml("<p>The problem can not be solved.<br/></p>");
+        ui->messageBlock->insertHtml("<p style='color:#ff0000'>The Sudoku problem can not be solved.<br/></p>");
     }
 }
 
@@ -80,19 +106,56 @@ void MainWindow::setBoardToggle()
         ui->newGame->setText("Solve !");
         ui->checking->setEnabled(false);
         ui->checking->setFlat(true);
-        ui->answer->setEnabled(false);
-        ui->answer->setFlat(true);
+        ui->generate->setEnabled(false);
+        ui->generate->setFlat(true);
+        s->clearMap();
+        this->printBoard();
         this->isSettingBoard = true;
     }
     else
     {
         ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        ui->newGame->setText("New Game");
+        ui->newGame->setText("Set Problem");
         ui->checking->setEnabled(true);
         ui->checking->setFlat(false);
-        ui->answer->setEnabled(true);
-        ui->answer->setFlat(false);
+        ui->generate->setEnabled(true);
+        ui->generate->setFlat(false);
         this->setBoard();
         this->isSettingBoard = false;
     }
+}
+
+void MainWindow::generateToggle()
+{
+    if(this->isGenerated == false)
+    {
+        ui->board->setEditTriggers(QAbstractItemView::CurrentChanged|QAbstractItemView::DoubleClicked|QAbstractItemView::SelectedClicked);
+        ui->generate->setText("Give me answer..");
+        ui->newGame->setEnabled(false);
+        ui->newGame->setFlat(true);
+        //generate
+        this->printBoard();
+        this->isGenerated = true;
+    }
+    else
+    {
+        ui->board->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        ui->generate->setText("Generate");
+        ui->newGame->setEnabled(true);
+        ui->newGame->setFlat(false);
+        this->setBoard();
+        this->isGenerated = false;
+    }
+}
+
+void MainWindow::checking()
+{
+    ui->messageBlock->insertHtml("<p>Checking...<br/></p>");
+}
+
+void MainWindow::msgScroll()
+{
+    QTextCursor c = ui->messageBlock->textCursor();
+    c.movePosition(QTextCursor::End);
+    ui->messageBlock->setTextCursor(c);
 }

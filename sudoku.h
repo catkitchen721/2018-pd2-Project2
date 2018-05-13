@@ -14,18 +14,21 @@ class Sudoku
 public:
     Sudoku();
     void setMap(const QTableWidget &board);
+    void clearMap();
     int getElement(int row, int column);
-    bool canBeSolved;
-    bool isCorrect();
     void solveSudoku(QTextBrowser *msg, QTableWidget *board);
+    bool isCorrect();
+    bool isFull();
+    bool isEmpty();
+    bool isProperMap();
+    bool canBeSolved;
 
 
 private:
     int map[9][9];
-    bool checkingUnity(const int a[]);
+    bool checkingUnity(const QVector<int> &a);
 
     /*Solve Area*/
-    bool isFull();
     QVector<bool> getPossibleVector(int x, int y);
     void setElement(int row, int column, int value);
 };
