@@ -330,6 +330,30 @@ void Sudoku::generateSudoku(QTextBrowser *msg, QTableWidget *board)
     //change column
 
     //change num
+    int x = 0;
+    int y = 0;
+
+    while(x == y)
+    {
+        x = rand() % 9 + 1;
+        y = rand() % 9 + 1;
+    }
+
+    for(int i=0; i<9; ++i)
+    {
+        for(int j=0; j<9; ++j)
+        {
+            if(seedMap[i][j] == x)
+            {
+                seedMap[i][j] = y;
+            }
+            else if(seedMap[i][j] == y)
+            {
+                seedMap[i][j] = x;
+            }
+            else;
+        }
+    }
 
     //rotate
 
