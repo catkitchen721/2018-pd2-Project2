@@ -28,7 +28,6 @@ public:
     void printBoard();
     void setBoard();
 
-
     ~MainWindow();
 
 private slots:

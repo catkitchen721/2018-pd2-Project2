@@ -64,7 +64,12 @@ void MainWindow::printBoard()
 void MainWindow::setBoard()
 {
     s->setMap(*(ui->board));
-    printBoard();
+    s->canBeSolved = false;
+    s->solveSudoku(ui->messageBlock, ui->board);
+    if(s->canBeSolved == false)
+    {
+        ui->messageBlock->insertHtml("<p>The problem can not be solved.<br/></p>");
+    }
 }
 
 void MainWindow::setBoardToggle()

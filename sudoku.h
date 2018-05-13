@@ -3,6 +3,7 @@
 
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QTextBrowser>
 #include <QString>
 #include <QVector>
 
@@ -14,8 +15,9 @@ public:
     Sudoku();
     void setMap(const QTableWidget &board);
     int getElement(int row, int column);
+    bool canBeSolved;
     bool isCorrect();
-    bool solveSudoku();
+    void solveSudoku(QTextBrowser *msg, QTableWidget *board);
 
 
 private:
@@ -25,6 +27,7 @@ private:
     /*Solve Area*/
     bool isFull();
     QVector<bool> getPossibleVector(int x, int y);
+    void setElement(int row, int column, int value);
 };
 
 #endif // SUDOKU_H
